@@ -1,0 +1,35 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Your Uploaded Files</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>File Name</th>
+                <th>Labels</th>
+                <th>Uploaded On</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for file in files %}
+            <tr>
+                <td>{{ file.file_name }}</td>
+                <td>{{ file.labels }}</td>
+                <td>{{ file.upload_date_time }}</td>
+                <td>
+                    <a href="{% url 'edit_uploaded_file' file.file_id %}" class="btn btn-primary">Edit</a>
+                    <a href="{% url 'delete_uploaded_file' file.file_id %}" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">You haven't uploaded any files yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+

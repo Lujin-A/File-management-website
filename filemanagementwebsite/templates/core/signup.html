@@ -1,0 +1,16 @@
+##signup.html
+{% extends "base_generic.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Sign Up</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form.as_p }} <!-- Render signup form fields -->
+        </div>
+        <button type="submit" class="btn btn-primary">Sign Up</button>
+    </form>
+    <p>Already have an account? <a href="{% url 'login' %}">Login here</a>.</p>
+</div>
+{% endblock %}

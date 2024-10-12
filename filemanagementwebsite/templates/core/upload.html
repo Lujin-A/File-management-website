@@ -1,0 +1,19 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<form id="file-upload-form" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="file-input">Select Files:</label>
+        <input type="file" id="file-input" name="file" multiple class="form-control"> <!-- Allows multiple file uploads -->
+    </div>
+    <div class="form-group">
+        <label for="labels">Add Tags/Labels:</label>
+        <input type="text" id="labels" name="labels" placeholder="Enter tags or labels" class="form-control">
+    </div>
+    <button type="submit" class="btn btn-primary">Upload Files</button>
+</form>
+
+{% endblock %}
+
+
