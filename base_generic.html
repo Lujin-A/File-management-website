@@ -1,0 +1,96 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}File Management Website{% endblock %}</title>
+
+    <!-- Link to Google Fonts for Roboto -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="{% url 'home' %}">
+            <img src="{% static 'images/LogoNav.png' %}" alt="Logo" style="height: 30px; margin-right: 8px;">
+            FMS
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'home' %}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path|slice:":7" == '/upload' %}active{% endif %}" href="{% url 'upload' %}">Upload Files</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path|slice:":18" == '/list_uploaded_files' %}active{% endif %}" href="{% url 'list_uploaded_files' %}">Manage Files</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path|slice:":14" == '/create_album' %}active{% endif %}" href="{% url 'create_album' %}">Create Album</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path|slice:":12" == '/album_list' %}active{% endif %}" href="{% url 'album_list' %}">Manage Albums</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path|slice:":12" == '/playback_management' %}active{% endif %}" href="{% url 'playback_management' %}">Playback Management</a>
+                </li>
+            </ul>
+            
+            <ul class="navbar-nav ml-auto">
+                {% if user.is_authenticated %}
+                    <li class="nav-item d-flex align-items-center">
+                        <!-- Username -->
+                        <a class="nav-link {% if request.path == '/profile/' %}active{% endif %}" href="{% url 'profile' %}">
+                            <span style="color: black;">{{ user.username }}</span>
+                        </a>
+            
+                        <!-- Logout Button -->
+                        <a class="nav-link button-1 {% if request.path == '/logout/' %}active{% endif %}" href="{% url 'logout' %}" style="color: white; max-width: 500px; margin-left: 20px;">
+                            Logout
+                        </a>
+                    </li>
+                {% else %}
+                        <!-- Login Button -->
+                    <li class="nav-item">
+                        <a class="nav-link button-1 {% if request.path == '/login/' %}active{% endif %}" href="{% url 'login' %}" style="color: white; max-width: 500px; margin-right: 20px;">
+                            Login
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+<!-- Footer -->
+<footer class="bg-light text-center py-4" style="margin-top: 220px;">
+    <p>&copy; 2024 File Management System. All rights reserved.</p>
+    <p>
+        <span>Developed By: </span> 
+        <span>Johanne Menez</span> |
+        <span>Lujin Alghamdi</span> |
+        <span>Sabina Pratamura</span>
+    </p>
+</footer>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>
+
+
