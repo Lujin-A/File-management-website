@@ -1,0 +1,33 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<h1>Playback Management</h1>
+
+{% if media_files %}
+    <div class="media-list">
+        {% for media in media_files %}
+        <div class="media-item mb-4">
+            <p>{{ media.file_name }}</p>
+            {% if media.is_audio %}
+                <audio controls>
+                    <source src="{{ media.file_location.url }}" type="audio/mpeg">
+                    Your browser does not support the audio tag.
+                </audio>
+            {% elif media.is_video %}
+                <video width="320" height="240" controls>
+                    <source src="{{ media.file_location.url }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            {% else %}
+                <p>Unsupported media type.</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>No media files available for playback.</p>
+{% endif %}
+
+{% endblock %}
+
+

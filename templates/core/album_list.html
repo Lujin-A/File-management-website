@@ -1,0 +1,59 @@
+{% extends 'base_generic.html' %}
+
+{% block content %}
+<div class="container">
+    <h2 class="title-h2">Your Albums</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Album Name</th>
+                <th>Display Pattern</th>
+                <th>Uploaded On</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for album in page_obj %}
+            <tr>
+                <td>
+                    <a href="{% url 'album_detail' album.id %}" style="color: #dc7801;">
+                        <strong>{{ album.album_name }}</strong>
+                    </a>
+                </td>
+                <td>{{ album.get_display_pattern_display }}</td>
+                <td>{{ album.created_date_time }}</td>  <!-- Added the creation date column -->
+                <td>
+                    <a href="{% url 'edit_album' album.id %}">
+                        <img src="/static/images/iconEdit.png" alt="Edit" style="width: 30px; height: 30px;">
+                    </a>
+                    <a href="{% url 'delete_album' album.id %}">
+                        <img src="/static/images/iconDelete.png" alt="Delete" style="width: 30px; height: 30px;">
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">You haven't created any albums yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Pagination controls -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+            {% endif %}
+
+            <li class="page-item disabled"><span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span></li>
+
+            {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+{% endblock %}

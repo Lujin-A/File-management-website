@@ -1,0 +1,147 @@
+{% extends 'base_generic.html' %}
+
+{% block content %}
+<div class="column">
+    <!-- Image before the title -->
+    <img src="/static/images/iconUpload.png" alt="Create Album" style="height: 50px; margin-right: 10px; vertical-align: middle;">
+    <h2 class="title-h2" style="display: inline;">Create Album</h2>
+</div>
+
+
+<!-- Display form errors at the top -->
+{% if album_form.errors %}
+    <div class="alert alert-danger">
+        <ul>
+            {% for field in album_form %}
+                {% for error in field.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data" id="album-form">
+    {% csrf_token %}
+    
+    <!-- Album name field with custom styles -->
+    <div class="form-group">
+
+        <label for="id_album_name" class="album_name_style">Album Name: *</label>
+        <br>
+        {{ album_form.album_name}}
+        <br>
+        <label for="id_album_name" class="album_display_style" style="margin-top: 35px;">Display Pattern: *</label>
+        {{ album_form.display_pattern}}
+    </div>
+
+    <!-- Additional spacing between fields -->
+    <div style="margin-bottom: 20px;"></div>
+
+    
+    <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+        <div style="flex: 1; margin-right: 10px;">
+        <h3 class="title-h3">Picking Media Files *</h3>
+        <div style="line-height: 1.8; font-family: 'Roboto', sans-serif;">
+            {{ media_form.media_files }}
+        </div>
+        {% if media_form.media_files.errors %}
+            <div style="color: red; margin-top: 5px;">
+                {% for error in media_form.media_files.errors %}
+                    <p style="color: red;">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+
+        <div style="flex: 1; margin-right: 10px;">
+            <h3 class="title-h3">Preview Media Files</h3>
+            <div id="album-display" class="album-display" style="line-height: 1.5;">
+                {% for media in media_form.fields.media_files.queryset %}
+                    <div class="file-container" style="margin-bottom: 5px;">
+                        <label>
+                            <a href="javascript:void(0);"
+                                style="color: #dc7801; font-family: 'Roboto', sans-serif;"
+                               onmouseover="showPreview(this, '{{ media.file_location.url }}', '{% if media.is_image %}image{% else %}text{% endif %}')"
+                               onmouseout="hidePreview()">
+                                {{ media.file_name }}
+                            </a>
+                        </label>
+                    </div>
+                {% empty %}
+                    <p>No files available for selection.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <input type="hidden" name="selected_media_ids" id="selected-media-ids">
+    <button type="submit" class="button-1">Create Album</button>
+
+    <div id="preview-tooltip" style="display:none; position:absolute; border:1px solid #ccc; padding:10px; background:white; z-index:10;">
+        <img id="preview-image" src="" style="max-width: 200px; max-height: 200px; display:none;">
+        <pre id="preview-text" class="text-preview" style="display:none;"></pre>
+    </div>
+
+    <!-- Add more content at the bottom -->
+    <div style="height: 100px;">&nbsp;</div> <!-- Spacer to create scrollable area -->
+</form>
+
+<script>
+    let selectedMediaIds = [];
+
+    function toggleMediaSelection(mediaId) {
+        const index = selectedMediaIds.indexOf(mediaId);
+        if (index > -1) {
+            selectedMediaIds.splice(index, 1); // Deselect media
+        } else {
+            selectedMediaIds.push(mediaId); // Select media
+        }
+        document.getElementById('selected-media-ids').value = selectedMediaIds.join(',');
+    }
+
+    function showPreview(element, fileUrl, fileType) {
+        const tooltip = document.getElementById('preview-tooltip');
+        const previewImage = document.getElementById('preview-image');
+        const previewText = document.getElementById('preview-text');
+
+        const rect = element.getBoundingClientRect();
+        tooltip.style.top = `${window.scrollY + rect.bottom}px`;
+        tooltip.style.left = `${window.scrollX + rect.left}px`;
+
+        if (fileType === 'image') {
+            previewImage.src = fileUrl;
+            previewImage.style.display = 'block';
+            previewText.style.display = 'none';
+        } else {
+            previewImage.style.display = 'none';
+            previewText.innerText = "Loading...";
+
+            fetch(fileUrl)
+                .then(response => response.text())
+                .then(text => {
+                    previewText.innerText = text;
+                    previewText.style.display = 'block';
+                })
+                .catch(error => {
+                    previewText.innerText = "Error loading content.";
+                });
+        }
+
+        tooltip.style.display = 'block';
+    }
+
+    function hidePreview() {
+        document.getElementById('preview-tooltip').style.display = 'none';
+    }
+
+    document.addEventListener('click', function(event) {
+        const tooltip = document.getElementById('preview-tooltip');
+        if (!tooltip.contains(event.target) && !event.target.closest('.file-container')) {
+            hidePreview();
+        }
+    });
+</script>
+
+{% endblock %}

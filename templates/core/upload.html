@@ -1,0 +1,40 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<form id="file-upload-form" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-group">
+        <div class="column">
+            <!-- Image before the title -->
+            <img src="/static/images/iconUpload.png" alt="Select Files" style="height: 50px; margin-right: 10px; vertical-align: middle;">
+            <h2 class="title-h2" style="display: inline;">Select Files</h2>
+        </div>
+
+        <label for="labels" style="font-family: 'Roboto', sans-serif;">Choose Files: *</label>
+        <input type="file" id="file-input" name="file" multiple class="form-control"> <!-- Allows multiple file uploads -->
+    </div>
+    <div class="form-group">
+        <label for="labels" style="font-family: 'Roboto', sans-serif;">Add Tags/Labels:</label>
+        <input type="text" id="labels" name="labels" placeholder="Enter tags or labels" class="form-control">
+    </div>
+    <button type="submit" class="button-1">Upload Files</button>
+</form>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const fileInput = document.querySelector('input[type="file"]');
+        const maxLimit = 600; // Maximum file upload limit
+
+        fileInput.addEventListener("change", function () {
+            if (this.files.length > maxLimit) {
+                alert(`You can only upload a maximum of ${maxLimit} files at a time.`);
+                this.value = ""; // Reset the file input
+            }
+        });
+    });
+</script>
+
+{% endblock %}
+
+

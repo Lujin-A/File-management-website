@@ -1,0 +1,22 @@
+<!-- screen_sharing_flask/templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Real-Time Screen Sharing</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
+    <style>
+        img { width: 100%; height: auto; max-width: 800px; }
+    </style>
+</head>
+<body>
+    <h1>Real-Time Screen Sharing</h1>
+    <img id="video-stream" alt="Video Stream"/>
+    <script>
+        var socket = io.connect(location.protocol + '//' + location.hostname + ':' + location.port);
+        socket.on('stream_video', function(data) {
+            document.getElementById('video-stream').src = 'data:image/jpeg;base64,' + data;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h2>{{ user.username }}'s Profile</h2>
+  <p>Role: {{ user.profile.role }}</p>
+  <a href="{% url 'logout' %}">Logout</a>
+{% endblock %}
+

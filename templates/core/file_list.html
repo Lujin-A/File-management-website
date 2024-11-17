@@ -1,0 +1,91 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<div class="container">
+    <h2 class="title-h2">Your Uploaded Files</h2>
+    <form id="batchDeleteForm" method="POST" action="{% url 'batch_delete_confirm' %}">
+        {% csrf_token %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Select</th>
+                    <th>File Name</th>
+                    <th>Labels</th>
+                    <th>Uploaded On</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for file in page_obj %}
+                <tr data-file-id="{{ file.file_id }}" class="file-row">
+                    <td><input type="checkbox" name="file_ids" value="{{ file.file_id }}" class="select-file"></td>
+                    <td>{{ file.file_name }}</td>
+                    <td>{{ file.labels }}</td>
+                    <td>{{ file.upload_date_time }}</td>
+                    <td>
+                        <a href="{% url 'edit_uploaded_file' file.file_id %}">
+                            <img src="/static/images/iconEdit.png" alt="Edit" style="width: 30px; height: 30px;">
+                        </a>
+                        <a href="{% url 'delete_uploaded_file' file.file_id %}">
+                            <img src="/static/images/iconDelete.png" alt="Delete" style="width: 30px; height: 30px;">
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">You haven't uploaded any files yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    
+        <!-- Batch Delete Button -->
+        <button type="submit" class="btn btn-danger" id="deleteSelectedButton" style="display: none;">
+            Delete Selected Files
+        </button>
+    </form>
+    
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const deleteButton = document.getElementById("deleteSelectedButton"); // Delete button element
+        const checkboxes = document.querySelectorAll(".select-file"); // All checkboxes for file selection
+
+        // Add event listeners to all checkboxes
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener("change", function () {
+                // Check if any checkbox is selected and toggle the button visibility
+                deleteButton.style.display = Array.from(checkboxes).some(cb => cb.checked) ? "inline-block" : "none";
+            });
+        });
+    });
+</script>
+
+<!-- Pagination controls -->
+<nav aria-label="Page navigation">
+    <ul class="pagination">
+        <!-- Previous Page Link -->
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+        </li>
+        {% endif %}
+
+        <!-- Current Page and Total Pages -->
+        <li class="page-item disabled">
+            <span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        </li>
+
+        <!-- Next Page Link -->
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+
+
+
+{% endblock %}

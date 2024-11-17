@@ -1,0 +1,108 @@
+{% extends 'base_generic.html' %}
+{% load static %}
+
+{% block content %}
+
+<h2 class="title-h2">{{ album.album_name }}</h2>
+
+<div>
+    <!-- Apply album_display_style to label -->
+    <label for="display-mode" class="album_display_style" style="margin-bottom: 30px;">Choose Display Mode:</label>
+
+    <!-- Apply album_display_form to select element -->
+    <select id="display-mode" aria-label="Display Mode Selector" class="album_display_form">
+        <option value="carousel" {% if album.display_pattern == 'carousel' %}selected{% endif %}>Carousel</option>
+        <option value="grid" {% if album.display_pattern == 'grid' %}selected{% endif %}>Grid View</option>
+        <option value="slideshow" {% if album.display_pattern == 'slideshow' %}selected{% endif %}>Slideshow</option>
+    </select>
+</div>
+
+    <h3 class="title-h3">Existing Album Files</h3>
+    <br>
+<div id="album-display" class="album-{{ album.display_pattern }}">
+
+    {% for media in media_files %}
+        <div class="file-container">
+            {% if media.file.is_image %}
+                <img src="{{ media.file.file_location.url }}" alt="{{ media.file.file_name }}" style="max-width: 200px; max-height: 200px;">
+            {% elif media.file.is_text_file %}
+                <h4>Text File Preview:</h4>
+                <pre class="text-preview">{% if media.file.content %}{{ media.file.content }}{% else %}No content available{% endif %}</pre>
+            {% else %}
+                <p>{{ media.file.file_name }} (File type not previewable)</p>
+            {% endif %}
+        </div>
+    {% empty %}
+        <p>No files found for this album.</p>
+    {% endfor %}
+    
+    <div class="controls" id="controls">
+        <button id="prevBtn">Previous</button>
+        <button id="nextBtn">Next</button>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const displayModeSelect = document.getElementById('display-mode');
+        const albumDisplay = document.getElementById('album-display');
+        const controls = document.getElementById('controls');
+        let currentSlide = 0; // Initialize current slide index
+        let slides = []; // Declare slides variable
+
+        // Function to update display class based on selected mode
+        function updateDisplayMode(mode) {
+            console.log(`Updating display mode to: ${mode}`);  // Log the selected mode
+            albumDisplay.className = ''; // Reset classes
+            albumDisplay.classList.add(`album-${mode}`); // Apply the selected display pattern class
+            console.log(`Applied class: album-${mode}`);  // Log the applied class
+
+            // Manage slideshow functionality based on the display mode
+            if (mode === 'slideshow') {
+                slides = albumDisplay.querySelectorAll('.file-container'); // Get all slides
+                currentSlide = 0; // Reset to first slide
+                showSlide(currentSlide); // Show the first slide
+                controls.style.display = 'block'; // Show controls
+            } else {
+                slides.forEach(slide => {
+                    slide.style.display = 'block'; // Show all slides
+                });
+                controls.style.display = 'none'; // Hide controls
+            }
+        }
+
+        // Function to show a specific slide
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.style.display = (i === index) ? 'block' : 'none'; // Show the current slide, hide others
+            });
+        }
+
+        // Function to go to the next slide
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slides.length; // Increment slide index
+            showSlide(currentSlide); // Show the next slide
+        }
+
+        // Function to go to the previous slide
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + slides.length) % slides.length; // Decrement slide index
+            showSlide(currentSlide); // Show the previous slide
+        }
+
+        // Set initial display mode from the select element
+        updateDisplayMode(displayModeSelect.value);
+
+        // Event listener for display mode change
+        displayModeSelect.addEventListener('change', function () {
+            const mode = this.value;
+            updateDisplayMode(mode);
+        });
+
+        // Event listeners for button clicks
+        document.getElementById('nextBtn').addEventListener('click', nextSlide);
+        document.getElementById('prevBtn').addEventListener('click', prevSlide);
+    });
+</script>
+
+{% endblock %}

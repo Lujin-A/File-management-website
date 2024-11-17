@@ -1,0 +1,10 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <div class="container">
+        <h2 class="title-h2">Album Created Successfully!</h2>
+        <p>Your album have been created successfully.</p>
+        <a href="{% url 'create_album' %}" class="button-1">Create More Albums</a>
+        <a href="{% url 'album_list' %}" class="button-2">View Album</a>
+    </div>
+{% endblock %}

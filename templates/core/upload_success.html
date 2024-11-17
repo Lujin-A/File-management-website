@@ -1,0 +1,10 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <div class="container">
+        <h2 class="title-h2">File Uploaded Successfully!</h2>
+        <p>Your files have been uploaded successfully.</p>
+        <a href="{% url 'upload' %}" class="button-1">Upload More Files</a>
+        <a href="{% url 'home' %}" class="button-2"  >Go to Home</a>
+    </div>
+{% endblock %}
